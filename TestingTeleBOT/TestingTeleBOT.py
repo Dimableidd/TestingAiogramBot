@@ -1,7 +1,8 @@
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
@@ -26,18 +27,13 @@ async def sql_add_command(state):
         base.commit()
 b1=KeyboardButton('/help')
 b2=KeyboardButton('/wtf')
+b3=KeyboardButton('/Links')
+b4=KeyboardButton('/You')
 kb_client = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-kb_client.row(b1,b2)
+kb_client.row(b1,b2,b3,b4)
 @dp.message_handler(commands = ['start'])
 async def send(message: types.Message):
     await message.answer('<b>Start</b>',reply_markup=kb_client)
-
-#@dp.message_handler()
-#async def send(message: types.Message):
- #   if message.text == '/help':
- #       await message.answer('<b>HELP</b>')
-   # elif message.text =='/wtf':
-  #      await message.answer('<b>WTF</b>')
 
 class FSMAdmin (StatesGroup):
     photo = State()
@@ -75,5 +71,25 @@ async def menus(message: types.Message):
     for ret in cur.execute('SELECT * FROM menu').fetchall():
         await bot.send_photo(message.from_user.id, ret[0],f'<b>{ret[1]}</b>\n<b>Description</b>: {ret[2]}')
 
+
+Inkey = InlineKeyboardMarkup(row_width=1)
+urlButton1 = InlineKeyboardButton(text='Link Vk',url='https://vk.com/dimableidd')
+urlButton2 = InlineKeyboardButton(text='Link YouTube',url='https://www.youtube.com')
+Inkey.add(urlButton1, urlButton2) 
+
+@dp.message_handler(commands='Links')
+async def url_command(message: types.Message):
+    await message.answer('Links:',reply_markup=Inkey)
+
+Inkeys = InlineKeyboardMarkup(row_width=1).add(InlineKeyboardButton(text='Problem?',callback_data='problem'))
+
+@dp.message_handler(commands='You')
+async def help_command(message:types.Message):
+    await message.answer('Inline button', reply_markup=Inkeys)
+
+@dp.callback_query_handler(text='problem')
+async def problem_to_mee(callback: types.CallbackQuery):
+    await callback.message.answer('Call my phone')
+    await callback.answer('Call my phone', show_alert=True)
 sql_start()
 executor.start_polling(dp,skip_updates=True)
