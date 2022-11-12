@@ -110,5 +110,13 @@ async def help_command(message:types.Message):
 async def problem_to_mee(callback: types.CallbackQuery):
     await callback.message.answer('Call my phone')
     await callback.answer('Call my phone', show_alert=True)
+
+@dp.message_handler(commands='photo')             # Photography     
+async def send_image(message: types.Message):
+    await bot.send_photo(chat_id=message.chat.id, photo="https://cs2.livemaster.ru/storage/64/59/ce36bab40612fe0403f0069346il--dlya-doma-i-interera-birdekel-nabor-podstavok-dlya-piva.jpg")
+
+@dp.message_handler(commands='location')          # Location
+async def send_point(message: types.Message):
+    await bot.send_location(chat_id=message.chat.id,latitude=47.74712,longitude=37.67967)
 sql_start()
 executor.start_polling(dp,skip_updates=True)
