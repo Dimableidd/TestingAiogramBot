@@ -118,5 +118,9 @@ async def send_image(message: types.Message):
 @dp.message_handler(commands='location')          # Location
 async def send_point(message: types.Message):
     await bot.send_location(chat_id=message.chat.id,latitude=47.74712,longitude=37.67967)
+
+@dp.message_handler(commands='sticker')           # Sticker
+async def send_stick(message: types.Message):
+    await bot.send_sticker(message.from_user.id, sticker='CAACAgIAAxkBAAEGeFJjeRXqurJOnmV7b4en0u1Gq5oHxAACBwADX6WdL0dLlVna9pRFKwQ')
 sql_start()
 executor.start_polling(dp,skip_updates=True)
