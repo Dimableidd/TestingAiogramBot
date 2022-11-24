@@ -37,11 +37,25 @@ b2=KeyboardButton('/wtf')
 b3=KeyboardButton('/Links')
 b4=KeyboardButton('/You')
 b5=KeyboardButton('/Delete')
+b6=KeyboardButton('/base')
+bb1=KeyboardButton('/photos')
+bb2=KeyboardButton('/location')
+bb3=KeyboardButton('/sticker')
+bb4=KeyboardButton('/start')
 kb_client = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-kb_client.row(b1,b2,b3,b4).add(b5)
+kb_clienthelp = ReplyKeyboardMarkup(resize_keyboard=True)
+kb_clienthelp.add(bb1,bb2).add(bb3).add(bb4)
+kb_client.row(b1,b2,b3,b4).add(b5).add(b6)
+
 @dp.message_handler(commands = ['start'])
 async def send(message: types.Message):
-    await message.answer('<b>Start</b>',reply_markup=kb_client)
+    await message.answer('start',reply_markup=kb_client)
+    await message.delete()
+
+@dp.message_handler(commands = ['help'])
+async def send(message: types.Message):
+    await message.answer('help',reply_markup=kb_clienthelp)
+    await message.delete()
 
 class FSMAdmin (StatesGroup):
     photo = State()
@@ -74,7 +88,7 @@ async def load_photo(message:types.Message, state:FSMContext):
     await sql_add_command(state)
     await state.finish()
 
-@dp.message_handler(commands='help')
+@dp.message_handler(commands='base')
 async def menus(message: types.Message):
     for ret in cur.execute('SELECT * FROM menu').fetchall():
         await bot.send_photo(message.from_user.id, ret[0],f'<b>{ret[1]}</b>\n<b>Description</b>: {ret[2]}')
@@ -111,7 +125,7 @@ async def problem_to_mee(callback: types.CallbackQuery):
     await callback.message.answer('Call my phone')
     await callback.answer('Call my phone', show_alert=True)
 
-@dp.message_handler(commands='photo')             # Photography     
+@dp.message_handler(commands='photos')             # Photography     
 async def send_image(message: types.Message):
     await bot.send_photo(chat_id=message.chat.id, photo="https://cs2.livemaster.ru/storage/64/59/ce36bab40612fe0403f0069346il--dlya-doma-i-interera-birdekel-nabor-podstavok-dlya-piva.jpg")
 
