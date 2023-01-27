@@ -136,5 +136,27 @@ async def send_point(message: types.Message):
 @dp.message_handler(commands='sticker')           # Sticker
 async def send_stick(message: types.Message):
     await bot.send_sticker(message.from_user.id, sticker='CAACAgIAAxkBAAEGeFJjeRXqurJOnmV7b4en0u1Gq5oHxAACBwADX6WdL0dLlVna9pRFKwQ')
+
+number = 0
+def get_inline_keyboard():
+    ikba = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('Increase',callback_data='btn_increase'),InlineKeyboardButton('Decrease',callback_data='btn_decrease')],])
+    return ikba
+
+@dp.message_handler(commands=['Schet']) # Schetchik
+async def cmd_start(message:types.Message):
+    await message.answer(f'The current number is {number}',reply_markup=get_inline_keyboard())
+
+@dp.callback_query_handler(lambda callback_querry: callback_querry.data.startswith('btn'))
+async def ikb_cb_handler(callback: types.CallbackQuery):
+    global number
+    if callback.data == 'btn_increase':
+        number += 1
+        await callback.message.edit_text(f'The current number is {number}',reply_markup=get_inline_keyboard())
+    elif callback.data == 'btn_decrease':
+        number -= 1
+        await callback.message.edit_text(f'The current number is {number}',reply_markup=get_inline_keyboard())
+
+
 sql_start()
 executor.start_polling(dp,skip_updates=True)
